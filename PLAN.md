@@ -158,7 +158,7 @@ plan.
 
 **Out of scope (explicit)**
 - **Any scraping, bulk download, API harvesting, or re-publication of COSMIC, OncoKB, DrugBank, or any
-  non-open / non-commercial / licensed oncology database.** A hard refusal under Elyos guardrails.
+  non-open / non-commercial / licensed oncology database.** A hard refusal under Hee-Lee Oss guardrails.
 - **Any controlled-access or individual-level patient data** (dbGaP, EGA, biobanks, EHR, identifiable
   specimens/images). Requires authorized access + IRB and is categorically excluded.
 - Redistribution of verbatim copyrighted article text (incl. CC BY-NC / CC BY-NC-ND full text).
@@ -209,7 +209,7 @@ A **data/content pipeline** project (with supporting code), not a hosted clinica
    query surface, and a simple explorer UI, each stamped with a **source-version manifest**.
 
 **Tech stack**
-- Tooling/importers/extractors/validators: **TypeScript, ESM, pnpm** (per Elyos conventions).
+- Tooling/importers/extractors/validators: **TypeScript, ESM, pnpm** (per Hee-Lee Oss conventions).
 - Graph serialization: **RDF (Turtle) + JSON-LD** with dereferenceable IRIs + **KGX/Biolink** TSV for
   downstream KG ingestion; **nanopublications** for assertion-level provenance interchange.
 - Validation: **SHACL** shapes + Biolink-conformance + a custom provenance/label linter in CI.
@@ -258,7 +258,7 @@ A **data/content pipeline** project (with supporting code), not a hosted clinica
 ### Hard boundary 1 — non-open oncology databases are out of scope
 A knowledge graph **scraped, harvested, or bulk-copied from COSMIC, OncoKB, DrugBank, or any other
 non-open / non-commercial / licensed oncology database** would violate those licenses and is therefore
-**OUT OF SCOPE and never acceptable** under Elyos's license guardrails. This includes automated
+**OUT OF SCOPE and never acceptable** under Hee-Lee Oss's license guardrails. This includes automated
 harvesting, re-publishing their records/derived fields, or laundering such data through an
 intermediary. We assume both contractual (license/ToS) and database-copyright protections apply and
 **do not touch these systems** absent an explicit written open-release agreement.
@@ -340,7 +340,7 @@ allow-list entry records this analysis.
 No contributor may curate therapeutic-evidence assertions for a drug, target, or program in which they
 hold an **undisclosed financial interest**. Disclosure is required; the maintainer/expert reviewer may
 recuse a contributor. This protects against the graph being steered to benefit a for-profit entity
-(Elyos criterion 3).
+(Hee-Lee Oss criterion 3).
 
 ## Quality, review & risk gates
 
@@ -350,7 +350,7 @@ recuse a contributor. This protects against the graph being steered to benefit a
    `sources/allowlist.yml` entry: source is open/openly-licensed, the *specific release* is cleared,
    PMC-OA articles are license-resolved per-article, and it is not COSMIC/OncoKB/controlled-access. No
    extraction may start against a `pending`/`rejected` source. Any task proposing to touch a non-open
-   DB or patient-level data is **refused and flagged** per Elyos guardrails.
+   DB or patient-level data is **refused and flagged** per Hee-Lee Oss guardrails.
 2. **Biomedical-accuracy / citation review (expert).** A **credentialed biomedical/oncology reviewer**
    (cancer biologist or bioinformatician with relevant domain expertise) samples extracted assertions
    against their cited open sources; mis-grounded entities, mis-citations, mis-stated evidence levels,
@@ -364,7 +364,7 @@ recuse a contributor. This protects against the graph being steered to benefit a
 with: provenance on **100%** of assertions; ≥4 approved open sources; passing SHACL +
 Biolink-conformance + provenance-completeness + not-advice-label CI; **100% of therapeutic assertions
 labeled and evidence-leveled**; retraction screening run; a **credentialed expert reviewer engaged**;
-and at least one research/advocacy **partner that has adopted or cited it**. Per Elyos, *delivered ≠
+and at least one research/advocacy **partner that has adopted or cited it**. Per Hee-Lee Oss, *delivered ≠
 merged* — the data must actually be in a beneficiary's hands.
 
 **Per-deed Definition of Done.** Acceptance criteria met + CI green (schema/SHACL/Biolink/provenance/
@@ -417,7 +417,7 @@ engagement sustained; (d) sustainability/source-refresh/reviewer-rotation plan i
 ## Work breakdown
 
 The itemized, schema-mapped backlog lives in [`TASKS.md`](./TASKS.md), organized by the milestones
-above (M0–M3) plus a sized backlog. Each task maps to an Elyos Task JSON and carries a type, size, risk
+above (M0–M3) plus a sized backlog. Each task maps to a Hee-Lee Oss Task JSON and carries a type, size, risk
 tier, deliverable, dependencies, and reviewer. M0 deliberately front-loads the licensing, provenance,
 Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
 
@@ -428,7 +428,7 @@ Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
 - **License/ToS reviewer:** TBD — must approve every `sources/allowlist.yml` entry (incl. PMC-OA
   per-article licenses); has veto over any source. **Naming a qualified person is a hard M0 exit
   criterion.** **Documented fallback if the seat is empty:** no source advances past `pending`, no
-  extraction begins, M0 cannot exit; the maintainer escalates to Elyos governance/board (and may engage
+  extraction begins, M0 cannot exit; the maintainer escalates to Hee-Lee Oss governance/board (and may engage
   qualified pro-bono counsel) before any data work proceeds.
 - **Credentialed biomedical/oncology accuracy reviewer (rotation):** cancer biologist /
   bioinformatician with relevant expertise; performs citation + grounding + evidence-level review.
@@ -440,7 +440,7 @@ Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
 - **Partner / requestor:** Ewing/sarcoma researchers, bioinformaticians, advocate-research authors,
   downstream KG projects (diffuse beneficiary class); a named representative org is TO BE SECURED.
 - **Conflict-of-interest steward:** maintainer enforces the COI/disclosure rule on therapeutic curation.
-- **Elyos governance/board:** arbiter for edge cases (e.g., a borderline source or a re-tiering
+- **Hee-Lee Oss governance/board:** arbiter for edge cases (e.g., a borderline source or a re-tiering
   decision) under the published conflict-of-interest/veto checklist.
 
 ## Dependencies & integrations
@@ -453,7 +453,7 @@ Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
 - **PubMed retraction notices + Retraction Watch open dataset** — retraction screening.
 - **SHACL tooling, an RDF library, a KGX/Biolink toolkit, a nanopublication library** (TypeScript/ESM
   ecosystem where available).
-- **Elyos pieces:** Task schema (`packages/schema`), CLI workspace/PR flow (`packages/cli`,
+- **Hee-Lee Oss pieces:** Task schema (`packages/schema`), CLI workspace/PR flow (`packages/cli`,
   `packages/core`), governance proposal/registry process. **Donated lane** — humans run their own
   agents. Any future metered extraction run uses `packages/runner` on an API key with a **hard
   per-task budget cap** (`funded` lane; `fundedBudgetUsd` required).
@@ -486,7 +486,7 @@ Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
   assertions), and *mis-framing* (therapeutic content read as advice) — addressed by the license,
   accuracy, and not-advice gates above.
 - **Secrets handling:** no API keys are required for the public open sources; any API tokens
-  (e.g. a rate-limited endpoint) stay out of logs, receipts, and commits per Elyos rules. The donated
+  (e.g. a rate-limited endpoint) stay out of logs, receipts, and commits per Hee-Lee Oss rules. The donated
   lane never runs headless or authenticates an agent. A funded run uses `packages/runner` with a hard
   budget cap and the same secret-hygiene rules.
 - **PII:** none — no patient or controlled-access data; subjects are molecular entities and published
@@ -531,7 +531,7 @@ Biolink-alignment, and not-advice guardrails before any bulk extraction begins.
 ## References
 
 - Project roadmap entry: `planning/ROADMAP.md` (Track 8a — Ewing's Sarcoma; `ewsr1-fli1-knowledge-graph`)
-- Elyos work rules: `CLAUDE.md`
+- Hee-Lee Oss work rules: `CLAUDE.md`
 - Good Deed Definition & risk tiers: `docs/good-deed-definition.md`
 - Task JSON schema: `packages/schema/src/schemas.ts`
 - CIViC (CC0); Open Targets Platform (CC0); Reactome; PMC open-access subset (per-article license)
@@ -601,7 +601,7 @@ been **applied** to the body above (and to `TASKS.md`). They are retained here s
 
 ## Review sign-off
 
-A completeness/correctness review of the revised plan + tasks was performed against the Elyos rules,
+A completeness/correctness review of the revised plan + tasks was performed against the Hee-Lee Oss rules,
 the good-deed definition, and the PLAN_SPEC structure:
 
 - **Structure:** all 17 required H2 sections present and in order; metadata header present; Appendix A

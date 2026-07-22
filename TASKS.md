@@ -6,9 +6,9 @@ Itemized backlog for the open knowledge graph of EWSR1-FLI1 / EWSR1-ETS fusion b
 sarcoma. See [`PLAN.md`](./PLAN.md) for context, the licensing gate, the not-advice framing, and the
 roadmap (M0–M3).
 
-## How these tasks map to Elyos
+## How these tasks map to Hee-Lee Oss
 
-Each task below becomes an Elyos **Task JSON** validated against `packages/schema/src/schemas.ts`.
+Each task below becomes a Hee-Lee Oss **Task JSON** validated against `packages/schema/src/schemas.ts`.
 Field mapping:
 
 - **id** — stable `ewsr1-fli1-knowledge-graph-<area>-NNN` (the table ID).

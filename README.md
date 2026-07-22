@@ -6,7 +6,7 @@ Ewing sarcoma is a rare, aggressive bone-and-soft-tissue cancer of children, ado
 
 **Definition of shipped:** Published open, provenance-tracked KG adopted/cited by researchers.
 
-This is an **Elyos** good-deed project. Contributors pull a task, do it with their own coding agent, and open a PR. Platform: https://github.com/jdev1977/elyos
+This is an **Hee-Lee Oss** good-deed project. Contributors pull a task, do it with their own coding agent, and open a PR. Platform: https://github.com/jdev1977/hee-lee-oss
 
 ## Plan
 - [PLAN.md](./PLAN.md) — robust enterprise plan (vision, architecture, roadmap, risks; includes an applied-improvements appendix + review sign-off)
@@ -15,8 +15,8 @@ This is an **Elyos** good-deed project. Contributors pull a task, do it with the
 
 ## Contribute
 ```bash
-elyos browse
-elyos next --repo Elyos-Projects/ewsr1-fli1-knowledge-graph --no-fork
+hee-lee-oss browse
+hee-lee-oss next --repo Hee-Lee-Oss-Projects/ewsr1-fli1-knowledge-graph --no-fork
 ```
 
 ## Licensing & review

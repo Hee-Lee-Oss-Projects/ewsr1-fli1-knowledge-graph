@@ -129,7 +129,7 @@ The findings below are the *residual* gaps after that hardening.
     "≥X% of EWSR1-FLI1 direct target genes attested in CIViC/Open Targets are represented with
     provenance") tied to a defined reference set, so 2,000 trivially-true edges can't game it.
 
-15. **No metric for the actual beneficiary outcome.** Per Elyos "delivered ≠ merged," the success metric
+15. **No metric for the actual beneficiary outcome.** Per Hee-Lee Oss "delivered ≠ merged," the success metric
     that matters is *a researcher answered a question they couldn't before*. There's a partner-adoption
     metric but no **task-based usability evaluation** (e.g., N researchers complete N sourced-lookup
     tasks against the explorer). Recommend adding one.
@@ -379,9 +379,9 @@ on the *truth and rights* problems (is it real, is it ours to use, is it safe) �
   Claude/agent user can query the provenance-bearing KG in natural language — directly leverages the
   JSON-LD/SPARQL surface and is a low-cost, high-visibility adoption driver.
 - **A reusable "provenance-first extraction" library** (span-grounding + entailment-check + nanopub
-  emission) usable by any Elyos data/content deed — the anti-hallucination harness generalized.
+  emission) usable by any Hee-Lee Oss data/content deed — the anti-hallucination harness generalized.
 - **A license-triage microservice** (PMC-OA per-article license resolver + aggregator-channel openness
-  classifier) reusable across all open-data Elyos projects.
+  classifier) reusable across all open-data Hee-Lee Oss projects.
 - **A "rare-cancer KG starter kit"** — template repo + BioCypher/KGX config + CI gates (SHACL, Biolink,
   provenance, not-advice) that a sarcoma/rare-disease lab can fork to bootstrap their own open KG.
 - **A nanopublication contribution channel** letting domain experts publish single, citable assertions
@@ -397,7 +397,7 @@ on the *truth and rights* problems (is it real, is it ours to use, is it safe) �
    rather than only "outreach started"?
 2. **Fusion model:** will you adopt GA4GH/VICC **VRS** for fusions/breakpoints, or a custom SO-based model?
    (Determines reconciliation with CIViC and precision of the Type 1/2 claim.)
-3. **Build substrate:** bespoke TypeScript/ESM (per Elyos convention) vs. **BioCypher** (Python, faster,
+3. **Build substrate:** bespoke TypeScript/ESM (per Hee-Lee Oss convention) vs. **BioCypher** (Python, faster,
    Biolink-native) — is the TS mandate worth the rebuild cost for a data/content project?
 4. **Reuse INDRA** for mechanistic extraction, or build relation extraction in-house? (Big effort/risk
    lever; INDRA already has provenance + belief.)
