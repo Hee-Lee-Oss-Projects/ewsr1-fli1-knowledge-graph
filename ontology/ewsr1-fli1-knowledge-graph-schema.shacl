@@ -1,0 +1,463 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix biolink: <https://w3id.org/biolink/vocab/> .
+@prefix ewsr1-fli1-kg: <https://w3id.org/ewsr1-fli1-knowledge-graph/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# SHACL Shapes for EWSR1-FLI1 Knowledge Graph Schema
+# Validates RDF instances against schema constraints.
+# Version: 1.0.0
+# Date: 2026-07-23
+
+# Gene Shape
+ewsr1-fli1-kg:GeneShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Gene ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "Gene must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Gene must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:symbol ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Gene must have a symbol" ;
+  ] ;
+  sh:property [
+    sh:path biolink:in_taxon ;
+    sh:minCount 1 ;
+    sh:message "Gene must be assigned to a taxon" ;
+  ] ;
+  .
+
+# Fusion Shape
+ewsr1-fli1-kg:FusionShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Protein ;
+  sh:node [ rdf:type biolink:Protein ] ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "Fusion must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Fusion must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:has_gene_template ;
+    sh:minCount 2 ;
+    sh:maxCount 2 ;
+    sh:message "Fusion must have exactly 2 gene templates (5' and 3' partners)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:has_biological_sequence ;
+    sh:minCount 1 ;
+    sh:message "Fusion must have at least one breakpoint" ;
+  ] ;
+  .
+
+# FusionBreakpoint Shape
+ewsr1-fli1-kg:FusionBreakpointShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:SequenceFeature ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "FusionBreakpoint must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "FusionBreakpoint must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:junction_type ;
+    sh:minCount 1 ;
+    sh:message "FusionBreakpoint must specify a junction type (SO term)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:breakpoint_subtype ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "FusionBreakpoint must specify a subtype (Type 1, Type 2, etc.)" ;
+  ] ;
+  .
+
+# Disease Shape
+ewsr1-fli1-kg:DiseaseShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Disease ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "Disease must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Disease must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:xref ;
+    sh:minCount 1 ;
+    sh:message "Disease must have at least one ontology cross-reference (MONDO, NCIT, EFO, Orphanet)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:in_taxon ;
+    sh:minCount 1 ;
+    sh:message "Disease must be assigned to a taxon" ;
+  ] ;
+  .
+
+# Pathway Shape
+ewsr1-fli1-kg:PathwayShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Pathway ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "Pathway must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Pathway must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:xref ;
+    sh:minCount 1 ;
+    sh:message "Pathway must have at least one ontology reference (Reactome, KEGG, GO)" ;
+  ] ;
+  .
+
+# Mechanism Shape
+ewsr1-fli1-kg:MechanismShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:BiologicalProcess ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "Mechanism must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "Mechanism must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:mechanism_type ;
+    sh:minCount 1 ;
+    sh:message "Mechanism must specify a type (GO or SO term)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:evidence_types ;
+    sh:minCount 1 ;
+    sh:message "Mechanism must have at least one evidence type (ECO term)" ;
+  ] ;
+  .
+
+# TherapeuticAgent Shape
+ewsr1-fli1-kg:TherapeuticAgentShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:SmallMolecule ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "TherapeuticAgent must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "TherapeuticAgent must have a label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:agent_type ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "TherapeuticAgent must specify a type (small_molecule, antibody, etc.)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:is_research_evidence_only ;
+    sh:minCount 1 ;
+    sh:datatype xsd:boolean ;
+    sh:hasValue true ;
+    sh:message "TherapeuticAgent.is_research_evidence_only MUST be true" ;
+  ] ;
+  sh:property [
+    sh:path biolink:development_stage ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "TherapeuticAgent must specify development stage" ;
+  ] ;
+  .
+
+# EvidenceAssertion Shape
+ewsr1-fli1-kg:EvidenceAssertionShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:InformationResource ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "EvidenceAssertion must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path biolink:subject ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:message "EvidenceAssertion must have exactly one subject" ;
+  ] ;
+  sh:property [
+    sh:path biolink:predicate ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:message "EvidenceAssertion must have exactly one predicate" ;
+  ] ;
+  sh:property [
+    sh:path biolink:object ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:message "EvidenceAssertion must have exactly one object" ;
+  ] ;
+  sh:property [
+    sh:path biolink:evidence_type ;
+    sh:minCount 1 ;
+    sh:message "EvidenceAssertion must have at least one evidence type (ECO term)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:evidence_level ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "EvidenceAssertion must specify evidence level (experimental, computational, literature, expert_assertion)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:source_document ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:message "EvidenceAssertion must have exactly one source document" ;
+  ] ;
+  sh:property [
+    sh:path biolink:source_release_version ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "EvidenceAssertion must specify exact source release version" ;
+  ] ;
+  sh:property [
+    sh:path biolink:extraction_method ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "EvidenceAssertion must specify extraction method (manual_curation, structured_import, literature_extraction)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:provenance_record ;
+    sh:minCount 1 ;
+    sh:message "EvidenceAssertion must have a provenance record" ;
+  ] ;
+  sh:property [
+    sh:path biolink:assertion_date ;
+    sh:minCount 1 ;
+    sh:datatype xsd:dateTime ;
+    sh:message "EvidenceAssertion must have an assertion date (ISO 8601)" ;
+  ] ;
+  # Conditional: if object is a TherapeuticAgent, not_medical_advice MUST be present
+  sh:sparql [
+    sh:message "EvidenceAssertions with therapeutic objects MUST have not_medical_advice property set to true" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this biolink:object ?object .
+        ?object rdf:type biolink:SmallMolecule .
+        FILTER NOT EXISTS { $this biolink:not_medical_advice true . }
+      }
+    """ ;
+  ] ;
+  .
+
+# SourceDocument Shape
+ewsr1-fli1-kg:SourceDocumentShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:InformationResource ;
+  sh:property [
+    sh:path rdf:type ;
+    sh:minCount 1 ;
+    sh:message "SourceDocument must have at least one rdf:type" ;
+  ] ;
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "SourceDocument must have a title/label" ;
+  ] ;
+  sh:property [
+    sh:path biolink:document_type ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "SourceDocument must specify document type (journal_article, database_release, preprint, technical_report)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:license ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "SourceDocument must specify license (CC0, CC-BY, CC-BY-NC, CC-BY-ND, CC-BY-NC-ND, PD)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:source_identifier ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "SourceDocument must have a canonical source identifier (PMID, CIViC release, etc.)" ;
+  ] ;
+  sh:property [
+    sh:path biolink:source_release_version ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:message "SourceDocument must specify the release version at ingestion time" ;
+  ] ;
+  # License validation: reject proprietary sources
+  sh:sparql [
+    sh:message "SourceDocument license MUST be open: CC0, CC-BY, CC-BY-NC, CC-BY-ND, CC-BY-NC-ND, or PD. Proprietary data excluded." ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this ?license
+      WHERE {
+        $this biolink:license ?license .
+        FILTER (?license NOT IN ("CC0", "CC-BY", "CC-BY-NC", "CC-BY-ND", "CC-BY-NC-ND", "PD"))
+      }
+    """ ;
+  ] ;
+  .
+
+# Biolink Conformance Rules
+# Ensure all edges conform to Biolink predicates
+
+ewsr1-fli1-kg:RegulatoryEdgeShape
+  a sh:NodeShape ;
+  sh:targetSubjectsOf biolink:regulates ;
+  sh:property [
+    sh:path biolink:regulates ;
+    sh:nodeKind sh:IRI ;
+    sh:message "biolink:regulates object must be an IRI" ;
+  ] ;
+  .
+
+ewsr1-fli1-kg:AssociatedWithIncreasingRiskEdgeShape
+  a sh:NodeShape ;
+  sh:targetSubjectsOf biolink:associated_with_increased_risk ;
+  sh:property [
+    sh:path biolink:associated_with_increased_risk ;
+    sh:nodeKind sh:IRI ;
+    sh:message "biolink:associated_with_increased_risk object must be an IRI" ;
+  ] ;
+  .
+
+ewsr1-fli1-kg:TreatsEdgeShape
+  a sh:NodeShape ;
+  sh:targetSubjectsOf biolink:treats ;
+  sh:property [
+    sh:path biolink:treats ;
+    sh:nodeKind sh:IRI ;
+    sh:message "biolink:treats object must be an IRI" ;
+  ] ;
+  sh:sparql [
+    sh:message "Assertions using biolink:treats MUST have not_medical_advice flag" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this biolink:treats ?object .
+        FILTER NOT EXISTS { ?assertion biolink:not_medical_advice true . }
+      }
+    """ ;
+  ] ;
+  .
+
+# Citation/Provenance Completeness Check
+# All EvidenceAssertions must be fully sourced
+
+ewsr1-fli1-kg:ProvenanceCompletenessShape
+  a sh:NodeShape ;
+  sh:sparql [
+    sh:message "All published EvidenceAssertions MUST have complete provenance: source_document + source_release_version + extraction_method + provenance_record" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this rdf:type biolink:InformationResource .
+        FILTER (
+          !BOUND(?source_document) ||
+          !BOUND(?source_release_version) ||
+          !BOUND(?extraction_method) ||
+          !BOUND(?provenance_record)
+        )
+      }
+    """ ;
+  ] ;
+  .
+
+# Entity Normalization Check
+# Genes, Diseases, Pathways, and TherapeuticAgents MUST be normalized to standard ontology IDs
+
+ewsr1-fli1-kg:GeneNormalizationShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Gene ;
+  sh:sparql [
+    sh:message "All Gene entities MUST be normalized to HGNC ID (or NCBI/Ensembl as fallback)" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this rdf:type biolink:Gene .
+        FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "hgnc:")) }
+        FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "ncbigene:")) }
+        FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "ensembl:")) }
+      }
+    """ ;
+  ] ;
+  .
+
+ewsr1-fli1-kg:DiseaseNormalizationShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Disease ;
+  sh:sparql [
+    sh:message "All Disease entities MUST be normalized to MONDO ID" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this rdf:type biolink:Disease .
+        FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "mondo:")) }
+      }
+    """ ;
+  ] ;
+  .
+
+ewsr1-fli1-kg:PathwayNormalizationShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Pathway ;
+  sh:sparql [
+    sh:message "All Pathway entities SHOULD be normalized to Reactome ID" ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this
+      WHERE {
+        $this rdf:type biolink:Pathway .
+        FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "reactome:")) }
+      }
+    """ ;
+  ] ;
+  .

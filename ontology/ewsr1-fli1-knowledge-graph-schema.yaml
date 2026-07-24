@@ -1,0 +1,501 @@
+id: https://w3id.org/ewsr1-fli1-knowledge-graph-schema
+name: ewsr1-fli1-knowledge-graph-schema
+title: EWSR1-FLI1 Knowledge Graph Schema
+description: >
+  Biolink-conformant schema for the EWSR1-FLI1 / EWSR1-ETS knowledge graph of Ewing sarcoma,
+  aligned to HGNC, MONDO, Sequence Ontology, Reactome, ChEMBL, GO, and ECO.
+version: 1.0.0
+license: CC0-1.0
+prefixes:
+  biolink: https://w3id.org/biolink/vocab/
+  biolinkml: https://w3id.org/biolink/biolinkml/
+  schema: http://schema.org/
+  dcmi: http://purl.org/dc/elements/1.1/
+  dcterms: http://purl.org/dc/terms/
+  prov: http://www.w3.org/ns/prov#
+  ewsr1-fli1-kg: https://w3id.org/ewsr1-fli1-knowledge-graph/
+  hgnc: https://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=
+  ncbigene: https://www.ncbi.nlm.nih.gov/gene/
+  ensembl: https://www.ensembl.org/id/
+  uniprot: https://www.uniprot.org/uniprotkb/
+  mondo: https://www.wikidata.org/wiki/
+  efo: http://www.ebi.ac.uk/efo/
+  ncit: http://purl.obolibrary.org/obo/NCIT_
+  orphanet: http://www.orpha.net/ORDO/
+  reactome: https://reactome.org/content/detail/
+  chembl: https://www.ebi.ac.uk/chembl/compound_report_card/
+  pubchem: https://pubchem.ncbi.nlm.nih.gov/compound/
+  drugcentral: https://drugcentral.org/
+  go: http://purl.obolibrary.org/obo/GO_
+  eco: http://purl.obolibrary.org/obo/ECO_
+  so: http://purl.obolibrary.org/obo/SO_
+  civicdb: https://civicdb.org/
+  pmid: https://www.ncbi.nlm.nih.gov/pubmed/
+  doi: https://doi.org/
+  NCBITaxon: http://purl.obolibrary.org/obo/NCBITaxon_
+
+default_prefix: ewsr1-fli1-kg
+default_range: string
+
+classes:
+  Gene:
+    description: >
+      A genomic entity representing a gene, including EWSR1, its ETS-family fusion partners,
+      and regulated target genes. Grounded to HGNC and NCBI Gene.
+    is_a: biolink:Gene
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique identifier resolvable via Biolink CURIE (e.g., hgnc:HGNC:3238)
+      name:
+        range: string
+        required: true
+        description: Gene symbol (e.g., EWSR1, FLI1)
+      symbol:
+        range: string
+        required: true
+        description: Official gene symbol per HGNC
+      description:
+        range: string
+        description: Full gene name and functional summary
+      xref:
+        range: uriorcurie
+        multivalued: true
+        description: Cross-references to NCBI Gene, Ensembl, UniProt
+      in_taxon:
+        range: uriorcurie
+        required: true
+        description: Organism (NCBITaxon:9606 for Homo sapiens)
+      genomic_location:
+        range: string
+        description: Chromosomal location (e.g., 22q12.2)
+
+  Fusion:
+    description: >
+      A somatic fusion protein resulting from a breakpoint between two genes.
+      Modeled as a biolink:Protein with partner-gene references.
+    is_a: biolink:Protein
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique fusion identifier (e.g., ewsr1-fli1-kg:fusion_EWSR1_FLI1)
+      name:
+        range: string
+        required: true
+        description: Fusion name (e.g., EWSR1-FLI1)
+      five_prime_partner_gene:
+        range: Gene
+        required: true
+        description: 5' breakpoint gene (reference to Gene.id)
+      three_prime_partner_gene:
+        range: Gene
+        required: true
+        description: 3' breakpoint gene (reference to Gene.id)
+      fusion_breakpoint:
+        range: FusionBreakpoint
+        multivalued: true
+        required: true
+        description: Ordered list of breakpoint junctions
+      description:
+        range: string
+        description: Brief characterization and prevalence
+      is_protein_altering:
+        range: boolean
+        required: true
+        description: True for in-frame fusions; false for out-of-frame
+      derived_from:
+        range: SourceDocument
+        multivalued: true
+        description: References to SourceDocument entities
+
+  FusionBreakpoint:
+    description: >
+      Specifies the molecular junction of a fusion at the exon level, using Sequence Ontology
+      classification. Enables precise modeling of Type 1, Type 2, and rarer subtypes.
+    is_a: biolink:SequenceFeature
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique breakpoint identifier
+      junction_type:
+        range: uriorcurie
+        required: true
+        description: Sequence Ontology term (e.g., SO:0001625 for chromosome_breakpoint)
+      breakpoint_subtype:
+        range: string
+        required: true
+        description: Clinical designation (Type 1, Type 2, etc.)
+      five_prime_exon:
+        range: integer
+        required: true
+        description: 5' partner exon number
+      five_prime_exon_coordinate:
+        range: string
+        description: Genomic coordinate of 5' exon boundary
+      three_prime_exon:
+        range: integer
+        required: true
+        description: 3' partner exon number
+      three_prime_exon_coordinate:
+        range: string
+        description: Genomic coordinate of 3' exon boundary
+      reading_frame:
+        range: string
+        required: true
+        description: "in_frame or out_of_frame"
+      description:
+        range: string
+        description: Functional annotation
+      frequency_in_ewing:
+        range: string
+        description: Observed prevalence (e.g., ~40%, rare)
+
+  Disease:
+    description: >
+      Represents disease entities, primarily Ewing sarcoma. Aligned to MONDO, EFO, NCIT, and Orphanet.
+    is_a: biolink:Disease
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique disease identifier (e.g., mondo:MONDO:0008121)
+      name:
+        range: string
+        required: true
+        description: Disease name
+      description:
+        range: string
+        description: Clinical and epidemiological summary
+      xref:
+        range: uriorcurie
+        multivalued: true
+        description: NCIT, EFO, Orphanet, MeSH identifiers
+      in_taxon:
+        range: uriorcurie
+        required: true
+        description: Affected species (NCBITaxon:9606)
+      disease_onset_qualifier:
+        range: string
+        description: Age of onset
+      has_material_basis_in:
+        range: Fusion
+        description: Molecular driver (typically a fusion)
+
+  Pathway:
+    description: >
+      Represents canonical biological pathways affected by the fusion.
+      Aligned to Reactome and Gene Ontology.
+    is_a: biolink:Pathway
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Reactome or GO identifier
+      name:
+        range: string
+        required: true
+        description: Pathway name
+      description:
+        range: string
+        description: Summary of the pathway and its role
+      xref:
+        range: uriorcurie
+        multivalued: true
+        description: KEGG, Wikipathways, or other database IDs
+      has_part:
+        range: Gene
+        multivalued: true
+        description: Gene products or complexes in the pathway
+      in_taxon:
+        range: uriorcurie
+        required: true
+        description: Species (NCBITaxon:9606)
+      evidence_level:
+        range: string
+        description: Experimental evidence supporting the link
+
+  Mechanism:
+    description: >
+      Represents molecular or cellular mechanisms (e.g., GGAA-microsatellite binding,
+      pioneer-factor activity). Maps to GO Biological Process and Molecular Function.
+    is_a: biolink:BiologicalProcess
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique mechanism identifier
+      name:
+        range: string
+        required: true
+        description: Mechanism name
+      description:
+        range: string
+        description: Detailed molecular explanation
+      has_input:
+        range: Gene
+        multivalued: true
+        description: Entities participating in the mechanism
+      has_output:
+        range: Gene
+        multivalued: true
+        description: Consequences of the mechanism
+      mechanism_type:
+        range: uriorcurie
+        required: true
+        description: GO or SO term
+      evidence_types:
+        range: uriorcurie
+        multivalued: true
+        required: true
+        description: ECO terms for supporting evidence
+
+  TherapeuticAgent:
+    description: >
+      Represents research-stage compounds, targets, or modalities with therapeutic relevance.
+      LABELED AS RESEARCH EVIDENCE ONLY; NOT MEDICAL ADVICE.
+      Aligned to ChEMBL and open compound/target databases.
+    is_a: biolink:SmallMolecule
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: ChEMBL, UniProt, or other identifier
+      name:
+        range: string
+        required: true
+        description: Common name or IUPAC
+      agent_type:
+        range: string
+        required: true
+        description: "small_molecule, antibody, kinase_inhibitor, protein_target, etc."
+      description:
+        range: string
+        description: Mechanism of action and rationale
+      xref:
+        range: uriorcurie
+        multivalued: true
+        description: DrugCentral (open), PubChem, or other open IDs
+      targets:
+        range: Gene
+        multivalued: true
+        description: Gene/protein targets
+      development_stage:
+        range: string
+        required: true
+        description: "preclinical, IND, Phase 1, Phase 2, Phase 3, approved"
+      is_research_evidence_only:
+        range: boolean
+        required: true
+        description: Always true; flagged in all outputs
+
+  EvidenceAssertion:
+    description: >
+      The provenance-bearing unit of the knowledge graph.
+      Encodes subject–predicate–object triples with full evidence lineage,
+      source attribution, evidence level, and regulatory metadata.
+    is_a: biolink:InformationResource
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Unique assertion identifier (e.g., nanopub:nanopub_12345)
+      subject:
+        range: string
+        required: true
+        description: Subject entity IRI
+      predicate:
+        range: uriorcurie
+        required: true
+        description: Biolink or custom relation
+      object:
+        range: string
+        required: true
+        description: Object entity IRI
+      assertion_type:
+        range: string
+        required: true
+        description: "regulatory, association, mechanistic, therapeutic, contraindication"
+      evidence_type:
+        range: uriorcurie
+        multivalued: true
+        required: true
+        description: ECO terms
+      evidence_level:
+        range: string
+        required: true
+        description: "experimental, computational, literature, expert_assertion"
+      confidence_score:
+        range: double
+        description: Confidence (0.0–1.0)
+      source_document:
+        range: SourceDocument
+        required: true
+        description: Reference to SourceDocument
+      source_release_version:
+        range: string
+        required: true
+        description: Exact release/version of source
+      extraction_method:
+        range: string
+        required: true
+        description: "manual_curation, structured_import, literature_extraction"
+      provenance_record:
+        range: string
+        required: true
+        description: Machine-readable provenance (JSON object encoded as string)
+      not_medical_advice:
+        range: boolean
+        description: Set to true if therapeutic or clinical implication
+      conflict_note:
+        range: string
+        description: Citation of competing evidence if assertion contradicts another
+      superseded_by:
+        range: EvidenceAssertion
+        multivalued: true
+        description: If assertion is retracted, cite superceding assertions
+      assertion_date:
+        range: datetime
+        required: true
+        description: When assertion was extracted/curated (ISO 8601)
+      curator_notes:
+        range: string
+        description: Free-text human curation commentary
+
+  SourceDocument:
+    description: >
+      Represents the original source: a published article, database release, or bulk-import event.
+      Carries license, provenance, and version metadata.
+    is_a: biolink:InformationResource
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+        required: true
+        description: Persistent document identifier
+      title:
+        range: string
+        required: true
+        description: Document title or database release name
+      authors:
+        range: string
+        multivalued: true
+        description: Author names
+      publication_date:
+        range: date
+        description: Original publication or release date (ISO 8601)
+      url:
+        range: uriorcurie
+        description: Stable, persistent URL
+      document_type:
+        range: string
+        required: true
+        description: "journal_article, database_release, preprint, technical_report"
+      license:
+        range: string
+        required: true
+        description: "CC0, CC-BY, CC-BY-NC, CC-BY-ND, CC-BY-NC-ND, PD, proprietary_no_license"
+      license_verified_date:
+        range: date
+        description: Date license status was verified (for PMC-OA)
+      rights_statement:
+        range: string
+        description: Machine-readable assertion of rights
+      source_identifier:
+        range: string
+        required: true
+        description: Canonical identifier (PMID, CIViC release, etc.)
+      source_release_version:
+        range: string
+        required: true
+        description: Version/release tag at ingestion time
+      abstract:
+        range: string
+        description: Publication abstract or release notes
+      mesh_terms:
+        range: string
+        multivalued: true
+        description: MeSH indexing
+      pubmed_id:
+        range: string
+        description: PMID if PubMed-indexed
+      pmc_id:
+        range: string
+        description: PubMed Central ID if PMC-OA
+      doi:
+        range: string
+        description: Digital Object Identifier
+
+slots:
+  regulates:
+    description: Subject regulates (activates or represses) object
+    is_a: biolink:regulates
+    domain: Fusion
+    range: Gene
+    multivalued: true
+
+  has_biological_sequence:
+    description: Subject has a biological sequence defined by object
+    is_a: biolink:has_biological_sequence
+    domain: Fusion
+    range: FusionBreakpoint
+    multivalued: true
+
+  associated_with_increased_risk:
+    description: Subject is associated with increased risk of object
+    is_a: biolink:associated_with_increased_risk
+    domain: Fusion
+    range: Disease
+    multivalued: true
+
+  involved_in:
+    description: Subject is involved in object
+    is_a: biolink:involved_in
+    domain: Fusion
+    range: Pathway
+    multivalued: true
+
+  has_mechanism:
+    description: Subject acts through mechanism specified by object
+    domain: Fusion
+    range: Mechanism
+    multivalued: true
+
+  has_material_basis_in:
+    description: Subject has material basis in object
+    is_a: biolink:has_material_basis_in
+    domain: Disease
+    range: Fusion
+
+  part_of:
+    description: Subject is part of object
+    is_a: biolink:part_of
+    domain: Mechanism
+    range: Pathway
+    multivalued: true
+
+  treats:
+    description: >
+      Subject may treat or have therapeutic potential for object.
+      RESEARCH EVIDENCE ONLY; NOT MEDICAL ADVICE.
+    is_a: biolink:treats
+    domain: TherapeuticAgent
+    range: Disease
+    multivalued: true
+
+  targets:
+    description: Subject targets (binds, inhibits, or activates) object
+    is_a: biolink:targets
+    domain: TherapeuticAgent
+    range: Gene
+    multivalued: true
