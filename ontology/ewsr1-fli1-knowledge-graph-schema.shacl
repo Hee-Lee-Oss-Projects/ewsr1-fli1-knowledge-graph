@@ -7,8 +7,24 @@
 
 # SHACL Shapes for EWSR1-FLI1 Knowledge Graph Schema
 # Validates RDF instances against schema constraints.
-# Version: 1.1.0
+# Version: 1.2.0
 # Date: 2026-07-23
+#
+# Predicate namespace policy: property paths use `biolink:` ONLY for slots that
+# are genuine Biolink Model predicates (symbol, in_taxon, xref, has_gene_template,
+# has_biological_sequence, regulates, associated_with_increased_risk, treats,
+# targets, subject, predicate, object). Every attribute this schema invented
+# because Biolink has no equivalent (breakpoint_subtype, junction_type,
+# mechanism_type, evidence_types, agent_type, is_research_evidence_only,
+# development_stage, evidence_type, evidence_level, source_document,
+# source_release_version, extraction_method, provenance_record, assertion_date,
+# not_medical_advice, document_type, license, source_identifier, assertion_type,
+# confidence_score, curator_notes, conflict_note, superseded_by) is scoped under
+# `ewsr1-fli1-kg:` instead, matching how the LinkML schema
+# (ewsr1-fli1-knowledge-graph-schema.yaml) actually resolves these slot URIs
+# (no `is_a:` biolink mapping -> default_prefix). Asserting these as `biolink:*`
+# would overclaim Biolink conformance for predicates Biolink does not define;
+# see ontology/README.md "Known Gaps and Limitations".
 
 # Gene Shape
 ewsr1-fli1-kg:GeneShape
@@ -83,12 +99,12 @@ ewsr1-fli1-kg:FusionBreakpointShape
     sh:message "FusionBreakpoint must have a label" ;
   ] ;
   sh:property [
-    sh:path biolink:junction_type ;
+    sh:path ewsr1-fli1-kg:junction_type ;
     sh:minCount 1 ;
     sh:message "FusionBreakpoint must specify a junction type (SO term)" ;
   ] ;
   sh:property [
-    sh:path biolink:breakpoint_subtype ;
+    sh:path ewsr1-fli1-kg:breakpoint_subtype ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "FusionBreakpoint must specify a subtype (Type 1, Type 2, etc.)" ;
@@ -160,12 +176,12 @@ ewsr1-fli1-kg:MechanismShape
     sh:message "Mechanism must have a label" ;
   ] ;
   sh:property [
-    sh:path biolink:mechanism_type ;
+    sh:path ewsr1-fli1-kg:mechanism_type ;
     sh:minCount 1 ;
     sh:message "Mechanism must specify a type (GO or SO term)" ;
   ] ;
   sh:property [
-    sh:path biolink:evidence_types ;
+    sh:path ewsr1-fli1-kg:evidence_types ;
     sh:minCount 1 ;
     sh:message "Mechanism must have at least one evidence type (ECO term)" ;
   ] ;
@@ -187,20 +203,20 @@ ewsr1-fli1-kg:TherapeuticAgentShape
     sh:message "TherapeuticAgent must have a label" ;
   ] ;
   sh:property [
-    sh:path biolink:agent_type ;
+    sh:path ewsr1-fli1-kg:agent_type ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "TherapeuticAgent must specify a type (small_molecule, antibody, etc.)" ;
   ] ;
   sh:property [
-    sh:path biolink:is_research_evidence_only ;
+    sh:path ewsr1-fli1-kg:is_research_evidence_only ;
     sh:minCount 1 ;
     sh:datatype xsd:boolean ;
     sh:hasValue true ;
     sh:message "TherapeuticAgent.is_research_evidence_only MUST be true" ;
   ] ;
   sh:property [
-    sh:path biolink:development_stage ;
+    sh:path ewsr1-fli1-kg:development_stage ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "TherapeuticAgent must specify development stage" ;
@@ -235,46 +251,47 @@ ewsr1-fli1-kg:EvidenceAssertionShape
     sh:message "EvidenceAssertion must have exactly one object" ;
   ] ;
   sh:property [
-    sh:path biolink:evidence_type ;
+    sh:path ewsr1-fli1-kg:evidence_type ;
     sh:minCount 1 ;
     sh:message "EvidenceAssertion must have at least one evidence type (ECO term)" ;
   ] ;
   sh:property [
-    sh:path biolink:evidence_level ;
+    sh:path ewsr1-fli1-kg:evidence_level ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "EvidenceAssertion must specify evidence level (experimental, computational, literature, expert_assertion)" ;
   ] ;
   sh:property [
-    sh:path biolink:source_document ;
+    sh:path ewsr1-fli1-kg:source_document ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
     sh:message "EvidenceAssertion must have exactly one source document" ;
   ] ;
   sh:property [
-    sh:path biolink:source_release_version ;
+    sh:path ewsr1-fli1-kg:source_release_version ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "EvidenceAssertion must specify exact source release version" ;
   ] ;
   sh:property [
-    sh:path biolink:extraction_method ;
+    sh:path ewsr1-fli1-kg:extraction_method ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "EvidenceAssertion must specify extraction method (manual_curation, structured_import, literature_extraction)" ;
   ] ;
   sh:property [
-    sh:path biolink:provenance_record ;
+    sh:path ewsr1-fli1-kg:provenance_record ;
     sh:minCount 1 ;
     sh:message "EvidenceAssertion must have a provenance record" ;
   ] ;
   sh:property [
-    sh:path biolink:assertion_date ;
+    sh:path ewsr1-fli1-kg:assertion_date ;
     sh:minCount 1 ;
     sh:datatype xsd:dateTime ;
     sh:message "EvidenceAssertion must have an assertion date (ISO 8601)" ;
   ] ;
   # Conditional: if object is a TherapeuticAgent, not_medical_advice MUST be present
+  # on THIS assertion (checked via $this, not an unbound variable).
   sh:sparql [
     sh:message "EvidenceAssertions with therapeutic objects MUST have not_medical_advice property set to true" ;
     sh:prefixes ewsr1-fli1-kg: , biolink: ;
@@ -283,7 +300,7 @@ ewsr1-fli1-kg:EvidenceAssertionShape
       WHERE {
         $this biolink:object ?object .
         ?object rdf:type biolink:SmallMolecule .
-        FILTER NOT EXISTS { $this biolink:not_medical_advice true . }
+        FILTER NOT EXISTS { $this ewsr1-fli1-kg:not_medical_advice true . }
       }
     """ ;
   ] ;
@@ -305,25 +322,25 @@ ewsr1-fli1-kg:SourceDocumentShape
     sh:message "SourceDocument must have a title/label" ;
   ] ;
   sh:property [
-    sh:path biolink:document_type ;
+    sh:path ewsr1-fli1-kg:document_type ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "SourceDocument must specify document type (journal_article, database_release, preprint, technical_report)" ;
   ] ;
   sh:property [
-    sh:path biolink:license ;
+    sh:path ewsr1-fli1-kg:license ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "SourceDocument must specify license (CC0, CC-BY, CC-BY-NC, CC-BY-ND, CC-BY-NC-ND, PD)" ;
   ] ;
   sh:property [
-    sh:path biolink:source_identifier ;
+    sh:path ewsr1-fli1-kg:source_identifier ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "SourceDocument must have a canonical source identifier (PMID, CIViC release, etc.)" ;
   ] ;
   sh:property [
-    sh:path biolink:source_release_version ;
+    sh:path ewsr1-fli1-kg:source_release_version ;
     sh:minCount 1 ;
     sh:datatype xsd:string ;
     sh:message "SourceDocument must specify the release version at ingestion time" ;
@@ -335,7 +352,7 @@ ewsr1-fli1-kg:SourceDocumentShape
     sh:select """
       SELECT $this ?license
       WHERE {
-        $this biolink:license ?license .
+        $this ewsr1-fli1-kg:license ?license .
         FILTER (?license NOT IN ("CC0", "CC-BY", "CC-BY-NC", "CC-BY-ND", "CC-BY-NC-ND", "PD"))
       }
     """ ;
@@ -374,13 +391,18 @@ ewsr1-fli1-kg:TreatsEdgeShape
     sh:message "biolink:treats object must be an IRI" ;
   ] ;
   sh:sparql [
-    sh:message "Assertions using biolink:treats MUST have not_medical_advice flag" ;
+    sh:message "The EvidenceAssertion asserting a biolink:treats edge MUST have not_medical_advice set to true" ;
     sh:prefixes ewsr1-fli1-kg: , biolink: ;
     sh:select """
       SELECT $this
       WHERE {
         $this biolink:treats ?object .
-        FILTER NOT EXISTS { ?assertion biolink:not_medical_advice true . }
+        FILTER NOT EXISTS {
+          ?assertion biolink:subject $this ;
+                     biolink:predicate biolink:treats ;
+                     biolink:object ?object ;
+                     ewsr1-fli1-kg:not_medical_advice true .
+        }
       }
     """ ;
   ] ;
@@ -397,7 +419,18 @@ ewsr1-fli1-kg:ProvenanceCompletenessShape
     sh:select """
       SELECT $this
       WHERE {
-        $this rdf:type biolink:InformationResource .
+        # Scoped to EvidenceAssertion instances specifically (identified by the
+        # subject/predicate/object triple pattern unique to that class), not
+        # every biolink:InformationResource -- SourceDocument is also an
+        # InformationResource but carries no source_document/extraction_method/
+        # provenance_record slots and must not be flagged by this check.
+        $this biolink:subject ?assertion_subject ;
+              biolink:predicate ?assertion_predicate ;
+              biolink:object ?assertion_object .
+        OPTIONAL { $this ewsr1-fli1-kg:source_document ?source_document }
+        OPTIONAL { $this ewsr1-fli1-kg:source_release_version ?source_release_version }
+        OPTIONAL { $this ewsr1-fli1-kg:extraction_method ?extraction_method }
+        OPTIONAL { $this ewsr1-fli1-kg:provenance_record ?provenance_record }
         FILTER (
           !BOUND(?source_document) ||
           !BOUND(?source_release_version) ||

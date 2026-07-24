@@ -4,7 +4,7 @@ title: EWSR1-FLI1 Knowledge Graph Schema
 description: >
   Biolink-conformant schema for the EWSR1-FLI1 / EWSR1-ETS knowledge graph of Ewing sarcoma,
   aligned to HGNC, MONDO, Sequence Ontology, Reactome, ChEMBL, GO, and ECO.
-version: 1.1.0
+version: 1.2.0
 license: CC0-1.0
 prefixes:
   biolink: https://w3id.org/biolink/vocab/

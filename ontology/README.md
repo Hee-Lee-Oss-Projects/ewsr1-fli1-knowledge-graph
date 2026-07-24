@@ -1,6 +1,6 @@
 # EWSR1-FLI1 Knowledge Graph Schema Specification
 
-**Version:** 1.1.0  
+**Version:** 1.2.0  
 **Date:** 2026-07-23  
 **License:** CC0-1.0  
 **Aligned to:** Biolink Model v1.8.3  
@@ -596,6 +596,7 @@ No public ontology fully covers gene-fusion knowledge graphs; the following mapp
 | ChEMBL/DrugCentral have no identifier for a "target-only" protein with no associated compound | `TherapeuticAgent.targets` | Falls back to `Gene.id` (e.g., an HGNC/NCBI Gene reference) with no independent small-molecule ontology term; `agent_type: "protein_target"` signals this case |
 | Reactome does not have a pathway entry for every fusion-specific perturbation described in primary literature | `Pathway` | Mechanism-level GO terms (`Mechanism.mechanism_type`) are used to capture the finding when no Reactome pathway ID exists yet; the pathway edge is simply omitted rather than mapped to an unrelated pathway |
 | MONDO/EFO/NCIT/Orphanet occasionally disagree on subtype granularity for Ewing sarcoma variants (e.g., extraosseous vs. osseous) | `Disease` | All applicable xrefs are recorded (multi-valued `xref`); no single "correct" disease ID is forced when sources disagree |
+| Most `EvidenceAssertion`, `FusionBreakpoint`, `Mechanism`, `TherapeuticAgent`, and `SourceDocument` attributes (e.g. `breakpoint_subtype`, `evidence_level`, `not_medical_advice`, `agent_type`, `document_type`, `license`) have no Biolink Model slot equivalent at all | SHACL stub property paths | These attributes are scoped under this schema's own `ewsr1-fli1-kg:` namespace rather than `biolink:`, both in the LinkML schema (unmapped attributes resolve to `default_prefix`) and in the SHACL shapes (v1.2.0). Only attributes with a genuine Biolink Model counterpart (`symbol`, `in_taxon`, `xref`, `has_gene_template`, `has_biological_sequence`, `regulates`, `treats`, `targets`, `subject`/`predicate`/`object`, etc.) use the `biolink:` prefix — asserting the rest as `biolink:*` would overclaim Biolink conformance for predicates Biolink does not define. |
 
 ---
 
@@ -654,6 +655,7 @@ All three formats are validated against SHACL shapes (see `ontology/ewsr1-fli1-k
 |---------|------|--------|
 | 1.0.0 | 2026-07-23 | Initial schema specification aligned to Biolink v1.8.3 and standard biomedical ontologies |
 | 1.1.0 | 2026-07-23 | Modeled the full EWSR1-ETS partner family (FLI1, ERG, ETV1, ETV4, FEV) with worked Fusion/FusionBreakpoint examples for a second partner (ERG); added the Known Gaps and Limitations section documenting unmapped ontology terms |
+| 1.2.0 | 2026-07-23 | Corrected the SHACL stub: schema-invented attributes with no Biolink Model equivalent (`breakpoint_subtype`, `junction_type`, `evidence_level`, `not_medical_advice`, `source_release_version`, `extraction_method`, `provenance_record`, `agent_type`, `is_research_evidence_only`, `development_stage`, `mechanism_type`, `evidence_types`, `document_type`, `license`, `source_identifier`, etc.) are now scoped under `ewsr1-fli1-kg:` instead of falsely asserted as `biolink:*`, matching the LinkML schema's actual URI resolution; fixed two non-functional SHACL SPARQL constraints (`ProvenanceCompletenessShape` tested `BOUND()` on variables that were never bound in the query, so it could never actually fire; `TreatsEdgeShape` checked `not_medical_advice` on an unbound `?assertion` instead of the assertion actually asserting the `treats` edge) |
 
 ---
 
