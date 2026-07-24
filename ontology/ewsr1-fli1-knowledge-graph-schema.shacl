@@ -7,7 +7,7 @@
 
 # SHACL Shapes for EWSR1-FLI1 Knowledge Graph Schema
 # Validates RDF instances against schema constraints.
-# Version: 1.0.0
+# Version: 1.1.0
 # Date: 2026-07-23
 
 # Gene Shape
@@ -441,6 +441,32 @@ ewsr1-fli1-kg:DiseaseNormalizationShape
       WHERE {
         $this rdf:type biolink:Disease .
         FILTER NOT EXISTS { $this biolink:xref ?xref . FILTER (STRSTARTS(STR(?xref), "mondo:")) }
+      }
+    """ ;
+  ] ;
+  .
+
+# EWSR1-ETS Partner Family Advisory Check
+# Fusion.three_prime_partner_gene is expected to name one of the five known ETS
+# partners (FLI1, ERG, ETV1, ETV4, FEV). This is an sh:Warning-severity advisory,
+# not a hard reject, so that a newly reported rare partner is flagged for curator
+# review rather than silently excluded (see ontology/README.md, "Known Gaps and
+# Limitations": normalization favors documenting the unknown over forcing a fit).
+
+ewsr1-fli1-kg:FusionPartnerFamilyAdvisoryShape
+  a sh:NodeShape ;
+  sh:targetClass biolink:Protein ;
+  sh:severity sh:Warning ;
+  sh:sparql [
+    sh:message "Fusion three_prime_partner_gene is not one of the five documented EWSR1-ETS partners (FLI1, ERG, ETV1, ETV4, FEV); flag for curator review before publication." ;
+    sh:prefixes ewsr1-fli1-kg: , biolink: ;
+    sh:select """
+      SELECT $this ?partner
+      WHERE {
+        $this biolink:has_gene_template ?partner .
+        ?partner biolink:symbol ?symbol .
+        FILTER NOT EXISTS { $this ewsr1-fli1-kg:five_prime_partner_gene ?partner . }
+        FILTER (?symbol NOT IN ("FLI1", "ERG", "ETV1", "ETV4", "FEV"))
       }
     """ ;
   ] ;

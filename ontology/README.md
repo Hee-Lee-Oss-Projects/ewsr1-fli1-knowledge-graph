@@ -1,6 +1,6 @@
 # EWSR1-FLI1 Knowledge Graph Schema Specification
 
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Date:** 2026-07-23  
 **License:** CC0-1.0  
 **Aligned to:** Biolink Model v1.8.3  
@@ -59,6 +59,34 @@ genomic_location: "22q12.2"
 
 ---
 
+#### 1a. The EWSR1-ETS Partner Gene Family
+
+EWSR1 (22q12.2) recombines with five known ETS-family transcription-factor genes in Ewing sarcoma. Each partner is modeled as an ordinary `Gene` instance (Section 1); the family is closed over these five members plus EWSR1 itself, and `Fusion.three_prime_partner_gene` (Section 2) is constrained to this set.
+
+| Partner symbol | Cytogenetic band | NCBI Gene (Entrez) ID | Approx. share of EWSR1-ETS fusions | HGNC ID |
+|---|---|---|---|---|
+| **FLI1** | 11q24.3 | `ncbigene:2313` | ~85% | *verify against HGNC REST lookup — see [Known Gaps](#known-gaps-and-limitations)* |
+| **ERG** | 21q22.2 | `ncbigene:2078` | ~10% | *verify against HGNC REST lookup* |
+| **ETV1** | 7p21.2 | `ncbigene:2115` | rare | *verify against HGNC REST lookup* |
+| **ETV4** | 17q21.31 | `ncbigene:2118` | rare | *verify against HGNC REST lookup* |
+| **FEV** | 2q35 | `ncbigene:54738` | rare | *verify against HGNC REST lookup* |
+
+Each partner gene follows the same `Gene` template as the EWSR1 example above (symbol, HGNC/NCBI/Ensembl xrefs, `in_taxon`). Numeric HGNC identifiers are intentionally left as a verification action rather than hard-coded here — per this schema's own entity-normalization policy (Data Quality & Validation, below), identifiers must be resolved and human-verified against the live registry before ingestion rather than asserted from memory.
+
+**Example (ERG partner gene):**
+```
+id: ncbigene:2078
+name: "ERG"
+symbol: "ERG"
+description: "ETS-family transcription factor; EWSR1's second most common Ewing sarcoma fusion partner after FLI1"
+xref:
+  - ensembl:ENSG00000157554
+in_taxon: NCBITaxon:9606
+genomic_location: "21q22.2"
+```
+
+---
+
 ### 2. **Fusion**
 
 Represents a somatic fusion protein resulting from a breakpoint between two genes.
@@ -95,6 +123,32 @@ description: "The canonical EWSR1-FLI1 fusion oncoprotein, a pioneer transcripti
 is_protein_altering: true
 derived_from:
   - civicdb:evidence/id/12345
+```
+
+**The five EWSR1-ETS fusions modeled by this schema:**
+
+| Fusion | `id` pattern | 3' partner (`Gene.id`) | Notes |
+|---|---|---|---|
+| EWSR1-FLI1 | `ewsr1-fli1-kg:fusion_EWSR1_FLI1` | `ncbigene:2313` | Canonical; Type 1/Type 2 breakpoints (see FusionBreakpoint) |
+| EWSR1-ERG | `ewsr1-fli1-kg:fusion_EWSR1_ERG` | `ncbigene:2078` | Second most common; analogous Type 1/Type 2 breakpoint nomenclature reported independently in the ERG literature |
+| EWSR1-ETV1 | `ewsr1-fli1-kg:fusion_EWSR1_ETV1` | `ncbigene:2115` | Rare; single case-series-level breakpoint characterization |
+| EWSR1-ETV4 | `ewsr1-fli1-kg:fusion_EWSR1_ETV4` | `ncbigene:2118` | Rare; single case-series-level breakpoint characterization |
+| EWSR1-FEV | `ewsr1-fli1-kg:fusion_EWSR1_FEV` | `ncbigene:54738` | Rarest reported partner |
+
+Every row reuses the identical `Fusion` and `FusionBreakpoint` templates — only `three_prime_partner_gene`, `fusion_breakpoint`, and the literature-sourced `derived_from` citations differ. No partner-specific subclassing is needed because the schema's cardinalities and datatypes are already partner-agnostic.
+
+**Example (EWSR1-ERG):**
+```
+id: ewsr1-fli1-kg:fusion_EWSR1_ERG
+name: "EWSR1-ERG"
+five_prime_partner_gene: hgnc:HGNC:3238
+three_prime_partner_gene: ncbigene:2078
+fusion_breakpoint:
+  - ewsr1-fli1-kg:breakpoint_EWSR1_ERG_type1
+description: "The second most common EWSR1-ETS fusion in Ewing sarcoma, present in a minority of cases lacking EWSR1-FLI1"
+is_protein_altering: true
+derived_from:
+  - civicdb:evidence/id/67890
 ```
 
 ---
@@ -135,6 +189,19 @@ three_prime_exon_coordinate: "11:128714071"
 reading_frame: "in_frame"
 description: "EWSR1 exon 7 / FLI1 exon 4 junction; canonical Type 1 fusion, ~40% of EWSR1-FLI1 Ewing cases"
 frequency_in_ewing: "~40%"
+```
+
+**Breakpoint nomenclature is partner-specific, not universal.** "Type 1" / "Type 2" is the historical EWSR1-FLI1 designation (Zucman et al., 1993, exon-junction based). EWSR1-ERG breakpoints are independently classified with their own Type 1/Type 2 labels in the ERG literature, using different exon boundaries. The `breakpoint_subtype` field is intentionally a free-text string (not a closed enum) to accommodate this per-partner nomenclature and any rarer/atypical junctions reported for ETV1, ETV4, or FEV fusions, where breakpoint typing has not yet been standardized. See [Known Gaps and Limitations](#known-gaps-and-limitations) for the absence of a dedicated Sequence Ontology term distinguishing these subtypes.
+
+**Example (EWSR1-ERG, Type 1):**
+```
+id: ewsr1-fli1-kg:breakpoint_EWSR1_ERG_type1
+junction_type: SO:0001625
+breakpoint_subtype: "Type 1"
+five_prime_exon: 7
+three_prime_exon: 6
+reading_frame: "in_frame"
+description: "EWSR1 exon 7 / ERG exon 6 junction; most frequently reported EWSR1-ERG breakpoint"
 ```
 
 ---
@@ -516,6 +583,22 @@ Every EvidenceAssertion related to therapeutic agents or clinical intervention *
 
 ---
 
+## Known Gaps and Limitations
+
+No public ontology fully covers gene-fusion knowledge graphs; the following mapping gaps are known and intentionally documented rather than papered over with an invented "exact" term:
+
+| Gap | Where it occurs | How this schema handles it |
+|---|---|---|
+| Biolink Model has no dedicated `GeneFusion` or `FusionProtein` class | `Fusion` class | Modeled as `biolink:Protein` + `biolink:has_gene_template`, the closest existing Biolink pattern; flagged as an approximation, not an exact match |
+| Sequence Ontology has no term distinguishing fusion "Type 1" vs. "Type 2" breakpoint subtypes | `FusionBreakpoint.breakpoint_subtype` | Generic `SO:0001625` (chromosome_breakpoint) used for `junction_type`; the partner-specific Type 1/2 label is carried as a free-text string, not a controlled SO term (see FusionBreakpoint section above) |
+| Biolink Model has no dedicated `Mechanism` class | `Mechanism` | Modeled as `biolink:BiologicalProcess`; molecular-function-flavored mechanisms may equally fit `biolink:MolecularActivity` — curators should pick the closer fit per instance and note the choice in `curator_notes` |
+| Exact numeric HGNC identifiers for the ERG, ETV1, ETV4, and FEV partner genes are not hard-coded in this spec | Gene (EWSR1-ETS Partner Gene Family) | Left as an explicit verification action against the live HGNC REST API before ingestion, consistent with this schema's normalization policy (unverified entities are excluded from publication, below) |
+| ChEMBL/DrugCentral have no identifier for a "target-only" protein with no associated compound | `TherapeuticAgent.targets` | Falls back to `Gene.id` (e.g., an HGNC/NCBI Gene reference) with no independent small-molecule ontology term; `agent_type: "protein_target"` signals this case |
+| Reactome does not have a pathway entry for every fusion-specific perturbation described in primary literature | `Pathway` | Mechanism-level GO terms (`Mechanism.mechanism_type`) are used to capture the finding when no Reactome pathway ID exists yet; the pathway edge is simply omitted rather than mapped to an unrelated pathway |
+| MONDO/EFO/NCIT/Orphanet occasionally disagree on subtype granularity for Ewing sarcoma variants (e.g., extraosseous vs. osseous) | `Disease` | All applicable xrefs are recorded (multi-valued `xref`); no single "correct" disease ID is forced when sources disagree |
+
+---
+
 ## Data Quality & Validation
 
 ### Cardinality and Mandatory Fields
@@ -570,6 +653,7 @@ All three formats are validated against SHACL shapes (see `ontology/ewsr1-fli1-k
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-07-23 | Initial schema specification aligned to Biolink v1.8.3 and standard biomedical ontologies |
+| 1.1.0 | 2026-07-23 | Modeled the full EWSR1-ETS partner family (FLI1, ERG, ETV1, ETV4, FEV) with worked Fusion/FusionBreakpoint examples for a second partner (ERG); added the Known Gaps and Limitations section documenting unmapped ontology terms |
 
 ---
 

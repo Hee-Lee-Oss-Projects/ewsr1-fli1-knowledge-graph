@@ -4,7 +4,7 @@ title: EWSR1-FLI1 Knowledge Graph Schema
 description: >
   Biolink-conformant schema for the EWSR1-FLI1 / EWSR1-ETS knowledge graph of Ewing sarcoma,
   aligned to HGNC, MONDO, Sequence Ontology, Reactome, ChEMBL, GO, and ECO.
-version: 1.0.0
+version: 1.1.0
 license: CC0-1.0
 prefixes:
   biolink: https://w3id.org/biolink/vocab/
@@ -36,6 +36,27 @@ prefixes:
 
 default_prefix: ewsr1-fli1-kg
 default_range: string
+
+# The five known EWSR1-ETS fusion partners in Ewing sarcoma (see ontology/README.md
+# section "1a. The EWSR1-ETS Partner Gene Family" for gene-level identifiers and
+# ontology/README.md "Known Gaps and Limitations" for HGNC-ID verification status).
+enums:
+  ETSPartnerSymbol:
+    description: >
+      Controlled vocabulary of ETS-family genes known to fuse with EWSR1 in Ewing sarcoma.
+      Used to document Fusion.three_prime_partner_gene coverage; not enforced as a hard
+      constraint in SHACL so that newly reported rare partners are not silently rejected.
+    permissible_values:
+      FLI1:
+        description: Canonical partner; ~85% of EWSR1-ETS fusions
+      ERG:
+        description: Second most common partner; ~10% of EWSR1-ETS fusions
+      ETV1:
+        description: Rare partner
+      ETV4:
+        description: Rare partner
+      FEV:
+        description: Rarest reported partner
 
 classes:
   Gene:
@@ -94,7 +115,10 @@ classes:
       three_prime_partner_gene:
         range: Gene
         required: true
-        description: 3' breakpoint gene (reference to Gene.id)
+        description: >
+          3' breakpoint gene (reference to Gene.id). In practice, drawn from the
+          ETSPartnerSymbol family (FLI1, ERG, ETV1, ETV4, FEV) for EWSR1-ETS fusions;
+          see ontology/README.md section 1a.
       fusion_breakpoint:
         range: FusionBreakpoint
         multivalued: true
@@ -130,7 +154,12 @@ classes:
       breakpoint_subtype:
         range: string
         required: true
-        description: Clinical designation (Type 1, Type 2, etc.)
+        description: >
+          Partner-specific literature designation (e.g., Type 1, Type 2). Free text,
+          not a closed enum: Sequence Ontology has no dedicated term distinguishing
+          these subtypes, and each EWSR1-ETS partner has its own independently
+          published Type 1/2 nomenclature. See ontology/README.md
+          "Known Gaps and Limitations".
       five_prime_exon:
         range: integer
         required: true
